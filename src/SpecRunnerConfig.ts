@@ -108,6 +108,10 @@ export class SpecRunnerConfig {
     return this.getBooleanConfig('ruby-spec-runner.rspecCodeLensDebugPrompts', true);
   }
 
+  get rspecCodeLensRerecordPrompts(): boolean {
+    return this.getBooleanConfig('ruby-spec-runner.rspecCodeLensRerecordPrompts', true);
+  }
+
   get minitestCodeLensPrompts(): boolean {
     return this.getBooleanConfig('ruby-spec-runner.minitestCodeLensPrompts', true);
   }

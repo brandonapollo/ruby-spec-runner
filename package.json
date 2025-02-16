@@ -44,6 +44,10 @@
 				"title": "Ruby Spec Runner: Debug this line in rspec"
 			},
 			{
+				"command": "ruby-spec-runner.rerecordRspecLine",
+				"title": "Ruby Spec Runner: Rerecord this line in rspec"
+			},
+			{
 				"command": "ruby-spec-runner.runFailedExamples",
 				"title": "Ruby Spec Runner: Re-run failed examples"
 			},
@@ -173,6 +177,12 @@
 					"type": "boolean",
 					"default": true,
 					"description": "Rspec: Show code lens prompts to debug specific examples or contexts in the editor",
+					"scope": "window"
+				},
+				"ruby-spec-runner.rspecCodeLensRerecordPrompts": {
+					"type": "boolean",
+					"default": true,
+					"description": "Rspec: Show code lens prompts to rerecord specific examples or contexts in the editor",
 					"scope": "window"
 				},
 				"ruby-spec-runner.minitestCodeLensPrompts": {
