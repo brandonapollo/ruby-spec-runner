@@ -22,9 +22,9 @@ export class SpecRunner {
     }
 
     if (arg?.fileName) {
-      this.runSpecForFile(arg.fileName, false, arg.line, arg.name, arg.debugging);
+      this.runSpecForFile(arg.fileName, false, arg.line, arg.name, arg.debugging, arg);
     } else {
-      this.runCurrentSpec(false, arg?.debugging);
+      this.runCurrentSpec(false, arg?.debugging, arg);
     }
   }
 
@@ -36,7 +36,7 @@ export class SpecRunner {
     this.runCurrentSpec(true);
   }
 
-  async runSpecForFile(fileName: string, failedOnly: boolean, line?: number, testName?: string, debugging?: boolean) {
+  async runSpecForFile(fileName: string, failedOnly: boolean, line?: number, testName?: string, debugging?: boolean, extraArgs?: any) {
     try {
       if (debugging) {
         const debugConfig = this.buildRspecDebugConfig(this.remappedPath(fileName), failedOnly, this.config.rubyDebugger, line, testName);
@@ -44,7 +44,7 @@ export class SpecRunner {
           vscode.debug.startDebugging(undefined, debugConfig);
         }
       } else {
-        const command = this.buildRspecCommand(this.remappedPath(fileName), failedOnly, line, testName);
+        const command = this.buildRspecCommand(this.remappedPath(fileName), failedOnly, line, testName, extraArgs);
         this.runTerminalCommand(command);
       }
 
@@ -59,7 +59,7 @@ export class SpecRunner {
     }
   }
 
-  async runCurrentSpec(failedOnly=false, debugging?: boolean) {
+  async runCurrentSpec(failedOnly=false, debugging?: boolean, extraArgs?: any) {
     const filePath = vscode.window.activeTextEditor?.document.fileName;
     if (!filePath) {
       console.error('SpecRunner: Unable to run spec as no editor is open.');
@@ -67,7 +67,7 @@ export class SpecRunner {
       return;
     }
 
-    await this.runSpecForFile(filePath, failedOnly, undefined, undefined, debugging);
+    await this.runSpecForFile(filePath, failedOnly, undefined, undefined, debugging, extraArgs);
   }
 
   private buildRspecDebugConfig(fileName: string, failedOnly: boolean,  rubyDebugger: RubyDebugger, line?: number, testName?: string): vscode.DebugConfiguration | undefined {
@@ -111,14 +111,14 @@ export class SpecRunner {
     }
   }
 
-  private buildRspecCommand(fileName: string, failedOnly: boolean, line?: number, testName?: string) {
+  private buildRspecCommand(fileName: string, failedOnly: boolean, line?: number, testName?: string, extraArgs?: any) {
     const file = line ? [fileName, ':', line].join('') : fileName;
     const failedOnlyModifier = failedOnly ? '--only-failures' : '';
     const format = `-f ${this.config.rspecFormat}`;
     const jsonOutput = this.config.rspecDecorateEditorWithResults ? `-f j --out ${quote(this.outputFilePath)}` : '';
 
     const [cdCommand, returnCommand] = this.buildChangeDirectoryToWorkspaceRootCommand();
-    const rspecCommand = [stringifyEnvs(this.config.rspecEnv), this.config.rspecCommand, failedOnlyModifier, format, jsonOutput, quote(file)].filter(Boolean).join(' ');
+    const rspecCommand = [stringifyEnvs({ ...this.config.rspecEnv, ...extraArgs }), this.config.rspecCommand, failedOnlyModifier, format, jsonOutput, quote(file)].filter(Boolean).join(' ');
 
     const fullCommand = cmdJoin(cdCommand, rspecCommand, returnCommand || '');
     return returnCommand === false ? `(${fullCommand})` : fullCommand;

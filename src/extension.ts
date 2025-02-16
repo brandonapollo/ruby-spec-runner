@@ -3,10 +3,10 @@ import { SpecRunnerConfig } from './SpecRunnerConfig';
 import SpecResultInterpreter from './rspec/SpecResultInterpreter';
 import SpecResultPresenter from './SpecResultPresenter';
 import { MinitestRunner, MinitestRunnerCodeLensProvider, MinitestRunnerButton, MinitestResultInterpreter, MinitestParser } from './minitest';
-import { SpecRunner, SpecRunnerCodeLensProvider, FailedSpecRunnerButton, SpecRunnerButton, SpecDebugButton } from './rspec';
+import { SpecRunner, SpecRunnerCodeLensProvider, FailedSpecRunnerButton, SpecRunnerButton, SpecDebugButton, SpecRerecordButton } from './rspec';
 import { RunRspecOrMinitestArg } from './types';
 
-const buildFileRunnerHandler = (minitestRunner: MinitestRunner, specRunner: SpecRunner, debugging: boolean) => async (args: any) => {
+const buildFileRunnerHandler = (minitestRunner: MinitestRunner, specRunner: SpecRunner, debugging: boolean, extraArgs: any = {}) => async (args: any) => {
   const filePath = vscode.window.activeTextEditor?.document.fileName;
   if (!filePath) {
     console.error('SpecRunner: Unable to run spec / minitest file as no editor is open.');
@@ -16,9 +16,9 @@ const buildFileRunnerHandler = (minitestRunner: MinitestRunner, specRunner: Spec
 
   if (filePath.match(/_test\.rb$/)) {
     if (debugging) { return; } // Minitest debugging does not seem to work :(
-    minitestRunner.runTest({ ...args, debugging });
+    minitestRunner.runTest({ ...args, debugging, ...extraArgs });
   } else {
-    specRunner.runSpec({ ...args, debugging });
+    specRunner.runSpec({ ...args, debugging, ...extraArgs });
   }
 };
 
@@ -98,6 +98,11 @@ export function activate(context: vscode.ExtensionContext) {
     async () => resultPresenter.clearTestResults()
   );
 
+  const rerecordRspecFile = vscode.commands.registerCommand(
+    'ruby-spec-runner.rerecordRspecFile',
+    buildFileRunnerHandler(minitestRunner, specRunner, false, { RERECORD: 'true' })
+  );
+
   const specCodeLensProvider = new SpecRunnerCodeLensProvider(config);
   const minitestCodeLensProvider = new MinitestRunnerCodeLensProvider(config);
 
@@ -113,6 +118,7 @@ export function activate(context: vscode.ExtensionContext) {
   const failedSpecRunnerButton = new FailedSpecRunnerButton(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 1), config);
   const specRunnerButton = new SpecRunnerButton(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 2), config);
   const specDebugButton = new SpecDebugButton(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 2), config);
+  const specRerecordButton = new SpecRerecordButton(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 2), config);
   const minitestRunnerButton = new MinitestRunnerButton(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 2), config);
 
   context.subscriptions.push(runRspecOrMinitestFile);
@@ -121,16 +127,19 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(debugRspecLine);
   context.subscriptions.push(clearResults);
   context.subscriptions.push(runFailedExample);
+  context.subscriptions.push(rerecordRspecFile);
   context.subscriptions.push(specCodeLensProviderDisposable);
   context.subscriptions.push(minitestCodeLensProviderDisposable);
   context.subscriptions.push(specRunnerButton.button);
   context.subscriptions.push(specDebugButton.button);
   context.subscriptions.push(failedSpecRunnerButton.button);
+  context.subscriptions.push(specRerecordButton.button);
   context.subscriptions.push(minitestRunnerButton.button);
   context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor((editor) => {
     failedSpecRunnerButton.update(editor);
     specRunnerButton.update(editor);
     specDebugButton.update(editor);
+    specRerecordButton.update(editor);
     minitestRunnerButton.update(editor);
     resultPresenter.update();
   }));
@@ -142,6 +151,7 @@ export function activate(context: vscode.ExtensionContext) {
   failedSpecRunnerButton.update();
   specRunnerButton.update();
   specDebugButton.update();
+  specRerecordButton.update();
   minitestRunnerButton.update();
 }
 

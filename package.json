@@ -50,6 +50,10 @@
 			{
 				"command": "ruby-spec-runner.clearResults",
 				"title": "Ruby Spec Runner: Clear test results for this file"
+			},
+			{
+				"command": "ruby-spec-runner.rerecordRspecFile",
+				"title": "Ruby Spec Runner: Rerecord this spec file"
 			}
 		],
 		"keybindings": [
@@ -270,6 +274,12 @@
 							}
 						}
 					}
+				},
+				"ruby-spec-runner.rspecRerecordButton": {
+					"type": "boolean",
+					"default": true,
+					"description": "Rspec: Show a status bar button to rerecord the current spec file",
+					"scope": "window"
 				}
 			}
 		}
