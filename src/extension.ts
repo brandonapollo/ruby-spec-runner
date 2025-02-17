@@ -63,12 +63,6 @@ const buildLineRunnerHandler = (minitestRunner: MinitestRunner, specRunner: Spec
 
 // This method is called when the extension is activated
 export function activate(context: vscode.ExtensionContext) {
-  // Initialize the output channel
-  outputChannel = vscode.window.createOutputChannel('Ruby Spec Runner');
-  context.subscriptions.push(outputChannel); // Ensure the output channel is disposed properly
-
-  outputChannel.appendLine('Extension "Ruby Spec Runner" is now active!');
-  outputChannel.show(true); // Show the output channel when extension activates
   console.log('Extension "spec-runner" is now active!');
 
   const config = new SpecRunnerConfig();
@@ -167,12 +161,4 @@ export function activate(context: vscode.ExtensionContext) {
   specDebugButton.update();
   specRerecordButton.update();
   minitestRunnerButton.update();
-}
-
-// This method is called when the extension is deactivated
-export function deactivate() {
-  if (outputChannel) {
-    outputChannel.appendLine('Extension "Ruby Spec Runner" is being deactivated.');
-    outputChannel.dispose();
-  }
 }
