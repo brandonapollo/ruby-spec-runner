@@ -19,7 +19,7 @@ const buildFileRunnerHandler = (minitestRunner: MinitestRunner, specRunner: Spec
     if (debugging) { return; } // Minitest debugging does not seem to work :(
     minitestRunner.runTest({ ...args, debugging });
   } else {
-    specRunner.runSpec(args, envVars);
+    specRunner.runSpec({ ...args, debugging }, envVars);
   }
 };
 
