@@ -48,7 +48,7 @@ describe.skip('SpecRunner', () => {
       processId: Promise.resolve(42),
       creationOptions: {},
       exitStatus: undefined,
-      state: { isInteractedWith: false },
+      state: { isInteractedWith: false, shell: undefined },
       show: showTerminalFake,
       hide: () => {},
       dispose: () => {},

@@ -1,329 +1,66 @@
 {
-	"name": "ruby-spec-runner",
-	"displayName": "Ruby Spec Runner",
-	"description": "Run specific rspec & minitest tests from within vscode",
-	"publisher": "Fooo",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/foneandrew/ruby-spec-runner"
-	},
-	"icon": "images/icon.png",
-	"license": "MIT",
-	"version": "4.0.0",
-	"engines": {
-		"vscode": "^1.94.0"
-	},
-	"keywords": [
-		"ruby tests",
-		"rspec",
-		"minitest"
-	],
-	"categories": [
-		"Other"
-	],
-	"activationEvents": [
-		"onLanguage:ruby"
-	],
-	"main": "./dist/extension.js",
-	"contributes": {
-		"commands": [
-			{
-				"command": "ruby-spec-runner.runRspecOrMinitestFile",
-				"title": "Ruby Spec Runner: Run this spec/minitest file"
-			},
-			{
-				"command": "ruby-spec-runner.runRspecOrMinitestLine",
-				"title": "Ruby Spec Runner: Run this line in rspec/minitest"
-			},
-			{
-				"command": "ruby-spec-runner.debugRspecFile",
-				"title": "Ruby Spec Runner: Debug this spec file"
-			},
-			{
-				"command": "ruby-spec-runner.debugRspecLine",
-				"title": "Ruby Spec Runner: Debug this line in rspec"
-			},
-			{
-				"command": "ruby-spec-runner.rerecordRspecLine",
-				"title": "Ruby Spec Runner: Rerecord this line in rspec"
-			},
-			{
-				"command": "ruby-spec-runner.runFailedExamples",
-				"title": "Ruby Spec Runner: Re-run failed examples"
-			},
-			{
-				"command": "ruby-spec-runner.clearResults",
-				"title": "Ruby Spec Runner: Clear test results for this file"
-			},
-			{
-				"command": "ruby-spec-runner.rerecordRspecFile",
-				"title": "Ruby Spec Runner: Rerecord this spec file"
-			}
-		],
-		"keybindings": [
-			{
-				"command": "ruby-spec-runner.runRspecOrMinitestLine",
-				"key": "ctrl+alt+/",
-				"mac": "ctrl+cmd+/",
-				"when": "editorLangId == 'ruby'"
-			},
-			{
-				"command": "ruby-spec-runner.runRspecOrMinitestFile",
-				"key": "ctrl+shift+alt+/",
-				"mac": "ctrl+shift+cmd+/",
-				"when": "editorLangId == 'ruby'"
-			},
-			{
-				"command": "ruby-spec-runner.debugRspecLine",
-				"key": "ctrl+k ctrl+alt+/",
-				"mac": "cmd+k ctrl+cmd+/",
-				"when": "editorLangId == 'ruby'"
-			},
-			{
-				"command": "ruby-spec-runner.debugRspecFile",
-				"key": "ctrl+k ctrl+shift+alt+/",
-				"mac": "cmd+k ctrl+shift+cmd+/",
-				"when": "editorLangId == 'ruby'"
-			}
-		],
-		"configuration": {
-			"title": "Ruby Spec Runner",
-			"properties": {
-				"ruby-spec-runner.rspecCommand": {
-					"type": "string",
-					"markdownDescription": "Rspec: Provide an alternative rspec command. For example you may need to use a different path to rspec.",
-					"scope": "window"
-				},
-				"ruby-spec-runner.rspecEnv": {
-					"type": "object",
-					"markdownDescription": "Rspec: Provide an environment variables for rspec command. For example you may to disable code coverage with something like `{\"SKIP_COVERAGE\": true}`.",
-					"scope": "window"
-				},
-				"ruby-spec-runner.rspecDebugEnv": {
-					"type": "object",
-					"markdownDescription": "Rspec: Provide additional environment variables for rspec command when debugging. For example you may to disable a spring preloader (which doesn't work with debugging) with something like `{\"DISABLE_SPRING\": true}`.\n\nEnvironment variables set here will be merged with those set in `rspecEnv` with `rspecDebugEnv` variables given preference.",
-					"scope": "window"
-				},
-				"ruby-spec-runner.minitestCommand": {
-					"type": "string",
-					"default": "",
-					"markdownDescription": "Minitest: Provide an alternative minitest command. For example you may need to use a different path to minitest.",
-					"scope": "window"
-				},
-				"ruby-spec-runner.minitestEnv": {
-					"type": "object",
-					"markdownDescription": "Minitest: Provide an environment variables for minitest command. For example you may to disable code coverage with something like `{\"SKIP_COVERAGE\": true}`.",
-					"scope": "window"
-				},
-				"ruby-spec-runner.changeDirectoryToWorkspaceRoot": {
-					"type": "boolean",
-					"default": true,
-					"description": "Changes directory to workspace root before running the spec",
-					"scope": "window"
-				},
-				"ruby-spec-runner.projectPath": {
-					"type": "string",
-					"default": "",
-					"description": "Absolute path to project directory (e.g. /home/me/project/sub-folder). Defaults to the workspace directory.",
-					"scope": "window"
-				},
-				"ruby-spec-runner.rspecFormat": {
-					"type": "string",
-					"enum": [
-						"Documentation",
-						"Progress"
-					],
-					"default": "Progress",
-					"markdownDescription": "Rspec: Output format for rspec.\n\n- **Documentation:** group and example names\n- **Progress:** dots for each example",
-					"scope": "window"
-				},
-				"ruby-spec-runner.saveBeforeRunning": {
-					"type": "boolean",
-					"default": true,
-					"description": "Save the file before running the spec/test",
-					"scope": "window"
-				},
-				"ruby-spec-runner.rspecRunButton": {
-					"type": "boolean",
-					"default": true,
-					"description": "Rspec: Show a status bar button to run the current spec file",
-					"scope": "window"
-				},
-				"ruby-spec-runner.rspecDebugButton": {
-					"type": "boolean",
-					"default": true,
-					"description": "Rspec: Show a status bar button to debug the current spec file",
-					"scope": "window"
-				},
-				"ruby-spec-runner.rspecRunAllFailedButton": {
-					"type": "boolean",
-					"default": false,
-					"description": "Rspec: Show a status bar button to re-run the failed examples for the current spec file",
-					"scope": "window"
-				},
-				"ruby-spec-runner.minitestRunButton": {
-					"type": "boolean",
-					"default": true,
-					"description": "Minitest: Show a status bar button to run the current minitest file",
-					"scope": "window"
-				},
-				"ruby-spec-runner.rspecCodeLensPrompts": {
-					"type": "boolean",
-					"default": true,
-					"description": "Rspec: Show code lens prompts to run specific examples or contexts in the editor",
-					"scope": "window"
-				},
-				"ruby-spec-runner.rspecCodeLensDebugPrompts": {
-					"type": "boolean",
-					"default": true,
-					"description": "Rspec: Show code lens prompts to debug specific examples or contexts in the editor",
-					"scope": "window"
-				},
-				"ruby-spec-runner.rspecCodeLensRerecordPrompts": {
-					"type": "boolean",
-					"default": true,
-					"description": "Rspec: Show code lens prompts to rerecord specific examples or contexts in the editor",
-					"scope": "window"
-				},
-				"ruby-spec-runner.minitestCodeLensPrompts": {
-					"type": "boolean",
-					"default": true,
-					"description": "Minitest: Show code lens prompts to run specific examples or contexts in the editor",
-					"scope": "window"
-				},
-				"ruby-spec-runner.rspecDecorateEditorWithResults": {
-					"type": "boolean",
-					"default": true,
-					"description": "Rspec: Highlight errors, show spec results in the gutter, and highlighting in the overview ruler.",
-					"scope": "window"
-				},
-				"ruby-spec-runner.rspecDecorateEditorWithStaleResults": {
-					"type": "boolean",
-					"default": true,
-					"markdownDescription": "Rspec: Display stale results in the editor gutter and overview ruler. Disable to hide stale results. Only applies when `Rspec Decorate Editor With Results` is enabled.",
-					"scope": "window"
-				},
-				"ruby-spec-runner.minitestDecorateEditorWithResults": {
-					"type": "boolean",
-					"default": true,
-					"markdownDescription": "Minitest: Highlight errors, show spec results in the gutter, and highlighting in the overview ruler.\n\n**Windows users: turn this off if the minitest command is failing or check the spec runner windowsTerminalType configuration.**",
-					"scope": "window"
-				},
-				"ruby-spec-runner.minitestDecorateEditorWithStaleResults": {
-					"type": "boolean",
-					"default": true,
-					"markdownDescription": "Minitest: Display stale results in the editor gutter and overview ruler. Disable to hide stale results. Only applies when `Minitest Decorate Editor With Results` is enabled.",
-					"scope": "window"
-				},
-				"ruby-spec-runner.windowsTerminalType": {
-					"type": "string",
-					"enum": [
-						"Bash",
-						"Powershell"
-					],
-					"default": "Powershell",
-					"markdownDescription": "Select the vscode default terminal for windows machines. Affects the command used for minitest editor decoration.",
-					"scope": "window"
-				},
-				"ruby-spec-runner.overviewHighlightPosition": {
-					"type": "string",
-					"enum": [
-						"Left",
-						"Right",
-						"Center"
-					],
-					"default": "Left",
-					"markdownDescription": "Select which side test results appear in the overview ruler. Can be useful if another extension uses a particular side of the overview ruler (eg git lens). Only applies when editor decorations are on.\n\n_(Does not apply to line failures which are always full width)_",
-					"scope": "window"
-				},
-				"ruby-spec-runner.clearTerminalOnTestRun": {
-					"type": "string",
-					"enum": [
-						"Clear",
-						"Do not clear"
-					],
-					"default": "Clear",
-					"markdownDescription": "Before a test command is executed the previous terminal output can be cleared. \n\n- **Clear:** Clear the terminal output\n- **Do not clear:** Do not clear the terminal output (allow scrollback)",
-					"scope": "window"
-				},
-				"ruby-spec-runner.rubyDebugger": {
-					"type": "string",
-					"enum": [
-						"Rdbg",
-						"Ruby LSP"
-					],
-					"default": "Rdbg",
-					"markdownDescription": "Which ruby debugger to use\n\n* **Rdbg:** The [ruby debug vscode extension](https://marketplace.visualstudio.com/items?itemName=KoichiSasada.vscode-rdbg)\n* **RubyLSP:** The [ruby-lsp vscode extension](https://marketplace.visualstudio.com/items?itemName=Shopify.ruby-lsp)",
-					"scope": "window"
-				},
-				"ruby-spec-runner.rewriteTestPaths": {
-					"type": "array",
-					"default": [],
-					"markdownDescription": "Rewrite paths in the test command. Useful for changing paths in the test command to match the environment the tests are run in (Docker etc). See the [the readme](https://marketplace.visualstudio.com/items?itemName=Fooo.ruby-spec-runner#rewriting-the-test-file-path) for more details.",
-					"items": {
-						"title": "Path mappings",
-						"type": "object",
-						"properties": {
-							"from": {
-								"type": "string",
-								"description": "The path to match"
-							},
-							"to": {
-								"type": "string",
-								"description": "The replacement path"
-							},
-							"regex": {
-								"type": "boolean",
-								"description": "Treat 'from' as a regex pattern",
-								"default": false
-							},
-							"exclusive": {
-								"type": "boolean",
-								"description": "Stop looking for other matches after successfully applying this rule",
-								"default": true
-							}
-						}
-					}
-				},
-				"ruby-spec-runner.rspecRerecordButton": {
-					"type": "boolean",
-					"default": true,
-					"description": "Rspec: Show a status bar button to rerecord the current spec file",
-					"scope": "window"
-				}
-			}
-		}
-	},
-	"scripts": {
-		"vscode:prepublish": "yarn run package",
-		"compile": "webpack",
-		"watch": "webpack --watch",
-		"package": "webpack --mode production --devtool hidden-source-map",
-		"compile-tests": "tsc -p . --outDir out",
-		"watch-tests": "tsc -p . -w --outDir out",
-		"pretest": "yarn run compile-tests && yarn run compile && yarn run lint",
-		"lint": "eslint src",
-		"test": "vscode-test"
-	},
-	"devDependencies": {
-		"@types/mocha": "^10.0.8",
-		"@types/node": "20.x",
-		"@types/sinon": "^17.0.3",
-		"@types/tmp": "^0.2.6",
-		"@types/vscode": "^1.94.0",
-		"@typescript-eslint/eslint-plugin": "^8.7.0",
-		"@typescript-eslint/parser": "^8.7.0",
-		"@vscode/test-cli": "^0.0.10",
-		"@vscode/test-electron": "^2.4.1",
-		"eslint": "^9.11.1",
-		"sinon": "^19.0.2",
-		"ts-loader": "^9.5.1",
-		"typescript": "^5.6.2",
-		"webpack": "^5.95.0",
-		"webpack-cli": "^5.1.4"
-	},
-	"dependencies": {
-		"chokidar": "^4.0.1",
-		"tmp": "^0.2.3"
-	}
+  "name": "ruby-spec-runner",
+  "displayName": "Ruby Spec Runner",
+  "description": "Run Ruby specs and tests from VS Code",
+  "version": "4.0.0",
+  "packageManager": "yarn@4.9.4",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brandonapollo/ruby-spec-runner.git"
+  },
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onLanguage:ruby"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [],
+    "configuration": {},
+    "languages": [
+      {
+        "id": "ruby",
+        "extensions": [
+          ".rb"
+        ]
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "yarn run package",
+    "compile": "webpack",
+    "watch": "webpack --watch",
+    "package": "webpack --mode production --devtool hidden-source-map",
+    "compile-tests": "tsc -p . --outDir dist",
+    "watch-tests": "tsc -p . -w --outDir dist",
+    "pretest": "yarn run compile-tests && yarn run compile && yarn run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./dist/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.8",
+    "@types/node": "16.x",
+    "@types/sinon": "^17.0.0",
+    "@types/tmp": "^0.2.6",
+    "@types/vscode": "^1.74.0",
+    "@typescript-eslint/eslint-plugin": "^5.45.0",
+    "@typescript-eslint/parser": "^5.45.0",
+    "@vscode/test-electron": "^2.4.1",
+    "eslint": "^8.28.0",
+    "mocha": "^10.4.0",
+    "node-loader": "^2.0.0",
+    "sinon": "^17.0.0",
+    "ts-loader": "^9.4.1",
+    "typescript": "^4.9.4",
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.0"
+  },
+  "dependencies": {
+    "chokidar": "^3.5.3",
+    "tmp": "^0.2.1"
+  }
 }
